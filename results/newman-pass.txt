@@ -2,96 +2,110 @@ newman
 
 Lab05 - Registration API Tests
 
-→ Setup - Active student B231234567
-  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 191ms]
+❏ Test 1 - Happy path
+↳ Setup - Active student B231234567
+  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 57ms]
   ✓  Status code is 200
   ✓  Response result is OK
 
-→ Setup - Course CS313 requires CS201
-  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 18ms]
+↳ Setup - Course CS313 requires CS201
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 6ms]
   ✓  Status code is 200
   ✓  Response result is OK
 
-→ Happy path - valid registration
-  POST http://localhost:3000/registrations [201 Created, 202B, 19ms]
+↳ Happy path - valid registration
+  POST http://localhost:3000/registrations [201 Created, 202B, 6ms]
   ✓  Status code is 201
   ✓  Response result is OK
   ✓  registrationID exists and is numeric
 
-→ Missing student returns ERROR_NO_STUDENT
-  POST http://localhost:3000/registrations [200 OK, 192B, 9ms]
+❏ Test 2 - Missing student
+↳ Missing student returns ERROR_NO_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 192B, 5ms]
   ✓  Status code is 200
   ✓  Result is ERROR_NO_STUDENT
 
-→ Inactive student returns ERROR_INACTIVE_STUDENT
-  PUT http://localhost:3000/students/B999 [200 OK, 178B, 29ms]
+❏ Test 3 - Inactive student
+↳ Inactive student returns ERROR_INACTIVE_STUDENT
+  PUT http://localhost:3000/students/B999 [200 OK, 178B, 6ms]
   ✓  Setup succeeded
 
-→ Inactive student check returns ERROR_INACTIVE_STUDENT
-  POST http://localhost:3000/registrations [200 OK, 198B, 8ms]
+↳ Inactive student check returns ERROR_INACTIVE_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 198B, 3ms]
   ✓  Status code is 200
   ✓  Result is ERROR_INACTIVE_STUDENT
 
-→ Missing course returns ERROR_NO_COURSE
-  POST http://localhost:3000/registrations [200 OK, 191B, 25ms]
+❏ Test 4 - Missing course
+↳ Missing course returns ERROR_NO_COURSE
+  POST http://localhost:3000/registrations [200 OK, 191B, 4ms]
   ✓  Status code is 200
   ✓  Result is ERROR_NO_COURSE
 
-→ Missing prerequisites returns ERROR_PREREQUISITES
-  PUT http://localhost:3000/students/B777 [200 OK, 178B, 9ms]
+❏ Test 5 - Missing prerequisites
+↳ Setup - Course CS313 for prerequisite test
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 4ms]
+  ✓  Status code is 200
+  ✓  Response result is OK
+
+↳ Missing prerequisites returns ERROR_PREREQUISITES
+  PUT http://localhost:3000/students/B777 [200 OK, 178B, 7ms]
   ✓  Setup succeeded
 
-→ Missing prerequisites check
-  POST http://localhost:3000/registrations [200 OK, 215B, 14ms]
+↳ Missing prerequisites check
+  POST http://localhost:3000/registrations [200 OK, 215B, 5ms]
   ✓  Status code is 200
   ✓  Result is ERROR_PREREQUISITES
   ✓  Missing prerequisites list includes CS201
 
-→ Bad request - missing StudentID or CourseID
-  POST http://localhost:3000/registrations [400 Bad Request, 202B, 20ms]
+❏ Test 6 - Bad request
+↳ Bad request - missing StudentID or CourseID
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 4ms]
   ✓  Status code is 400
   ✓  Result is ERROR_BAD_REQUEST
 
-→ Bad JSON returns ERROR_BAD_JSON
-  POST http://localhost:3000/registrations [400 Bad Request, 199B, 7ms]
+❏ Test 7 - Bad JSON
+↳ Bad JSON returns ERROR_BAD_JSON
+  POST http://localhost:3000/registrations [400 Bad Request, 199B, 4ms]
   ✓  Status code is 400
   ✓  Result is ERROR_BAD_JSON
 
-→ Boundary - no-prerequisite course succeeds
-  PUT http://localhost:3000/courses/CS101 [200 OK, 178B, 8ms]
+❏ Test 8 - Boundary no prerequisites
+↳ Boundary - no-prerequisite course succeeds
+  PUT http://localhost:3000/courses/CS101 [200 OK, 178B, 5ms]
   ✓  Setup succeeded
 
-→ Boundary - no-prerequisite registration succeeds
-  PUT http://localhost:3000/students/B304 [200 OK, 178B, 16ms]
+↳ Boundary - no-prerequisite registration succeeds
+  PUT http://localhost:3000/students/B304 [200 OK, 178B, 4ms]
   ✓  Setup succeeded
 
-→ Boundary - no-prerequisite course registration
+↳ Boundary - no-prerequisite course registration
   POST http://localhost:3000/registrations [201 Created, 202B, 4ms]
   ✓  Status code is 201
   ✓  Success result is OK
 
-→ Public API - JSONPlaceholder users
-  GET https://jsonplaceholder.typicode.com/users [200 OK, 6.6kB, 230ms]
+❏ Test 9 - Public API
+↳ Public API - JSONPlaceholder users
+  GET https://jsonplaceholder.typicode.com/users [200 OK, 6.6kB, 50ms]
   ✓  Status code is 200
   ✓  Response is an array
   ✓  First user name is Leanne Graham
 
-┌─────────────────────────┬───────────────────┬──────────────────┐
-│                         │          executed │           failed │
-├─────────────────────────┼───────────────────┼──────────────────┤
-│              iterations │                 1 │                0 │
-├─────────────────────────┼───────────────────┼──────────────────┤
-│                requests │                15 │                0 │
-├─────────────────────────┼───────────────────┼──────────────────┤
-│            test-scripts │                15 │                0 │
-├─────────────────────────┼───────────────────┼──────────────────┤
-│      prerequest-scripts │                 0 │                0 │
-├─────────────────────────┼───────────────────┼──────────────────┤
-│              assertions │                29 │                0 │
-├─────────────────────────┴───────────────────┴──────────────────┤
-│ total run duration: 1342ms                                     │
-├────────────────────────────────────────────────────────────────┤
-│ total data received: 6kB (approx)                              │
-├────────────────────────────────────────────────────────────────┤
-│ average response time: 40ms [min: 4ms, max: 230ms, s.d.: 67ms] │
-└────────────────────────────────────────────────────────────────┘
+┌─────────────────────────┬──────────────────┬──────────────────┐
+│                         │         executed │           failed │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              iterations │                1 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│                requests │               16 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│            test-scripts │               16 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│      prerequest-scripts │                0 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              assertions │               31 │                0 │
+├─────────────────────────┴──────────────────┴──────────────────┤
+│ total run duration: 635ms                                     │
+├───────────────────────────────────────────────────────────────┤
+│ total data received: 6.02kB (approx)                          │
+├───────────────────────────────────────────────────────────────┤
+│ average response time: 10ms [min: 3ms, max: 57ms, s.d.: 16ms] │
+└───────────────────────────────────────────────────────────────┘

@@ -1,0 +1,43 @@
+newman
+
+Lab05 - Registration API Tests (Intentional fail)
+
+→ Setup - Active student B231234567
+  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 71ms]
+  ✓  Status code is 200
+
+→ Setup - Course CS313 requires CS201
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 6ms]
+  ✓  Status code is 200
+
+→ Broken oracle - expecting 200 instead of 201
+  POST http://localhost:3000/registrations [201 Created, 202B, 7ms]
+  1. Broken oracle: status should be 200
+  ✓  Broken oracle: result should be OK
+
+┌─────────────────────────┬──────────────────┬──────────────────┐
+│                         │         executed │           failed │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              iterations │                1 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│                requests │                3 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│            test-scripts │                3 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│      prerequest-scripts │                0 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              assertions │                4 │                1 │
+├─────────────────────────┴──────────────────┴──────────────────┤
+│ total run duration: 245ms                                     │
+├───────────────────────────────────────────────────────────────┤
+│ total data received: 64B (approx)                             │
+├───────────────────────────────────────────────────────────────┤
+│ average response time: 28ms [min: 6ms, max: 71ms, s.d.: 30ms] │
+└───────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                [39m
+[90m    [39m[90m                [39m[90m                                                       [39m
+ 1.  AssertionError  Broken oracle: status should be 200                   
+                     expected response to have status code 200 but got 201 
+                     at assertion:0 in test-script                         
+                     inside "Broken oracle - expecting 200 instead of 201" 
