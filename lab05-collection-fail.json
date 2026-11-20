@@ -1,0 +1,71 @@
+{
+  "info": {
+    "name": "Lab05 - Registration API Tests (Intentional fail)",
+    "description": "Broken pass condition to demonstrate a failing Newman run",
+    "schema": "https://schema.getpostman.com/json/collection/v1.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Setup - Active student B231234567",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS201\"]}" },
+        "url": "{{baseUrl}}/students/B231234567"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Setup - Course CS313 requires CS201",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"prerequisites\":[\"CS201\"]}" },
+        "url": "{{baseUrl}}/courses/CS313"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Broken oracle - expecting 200 instead of 201",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234567\",\"courseID\":\"CS313\"}" },
+        "url": "{{baseUrl}}/registrations"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test(\"Broken oracle: status should be 200\", function () { pm.response.to.have.status(200); });",
+            "pm.test(\"Broken oracle: result should be OK\", function () { var json = pm.response.json(); pm.expect(json.result).to.eql(\"OK\"); });"
+          ]
+        }
+      }]
+    }
+  ]
+}
