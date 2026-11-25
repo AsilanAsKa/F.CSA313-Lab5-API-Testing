@@ -2,42 +2,137 @@ newman
 
 Lab05 - Registration API Tests (Intentional fail)
 
-→ Setup - Active student B231234567
-  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 71ms]
+❏ Test 1 - Happy path
+↳ Setup - Active student B231234567
+  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 57ms]
   ✓  Status code is 200
+  ✓  Response result is OK
 
-→ Setup - Course CS313 requires CS201
+↳ Setup - Course CS313 requires CS201
   PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 6ms]
   ✓  Status code is 200
+  ✓  Response result is OK
 
-→ Broken oracle - expecting 200 instead of 201
-  POST http://localhost:3000/registrations [201 Created, 202B, 7ms]
-  1. Broken oracle: status should be 200
-  ✓  Broken oracle: result should be OK
+↳ Happy path - valid registration
+  POST http://localhost:3000/registrations [201 Created, 202B, 5ms]
+  1. Status code is 201
+  ✓  Response result is OK
+  ✓  registrationID exists and is numeric
 
-┌─────────────────────────┬──────────────────┬──────────────────┐
-│                         │         executed │           failed │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│              iterations │                1 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│                requests │                3 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│            test-scripts │                3 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│      prerequest-scripts │                0 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│              assertions │                4 │                1 │
-├─────────────────────────┴──────────────────┴──────────────────┤
-│ total run duration: 245ms                                     │
-├───────────────────────────────────────────────────────────────┤
-│ total data received: 64B (approx)                             │
-├───────────────────────────────────────────────────────────────┤
-│ average response time: 28ms [min: 6ms, max: 71ms, s.d.: 30ms] │
-└───────────────────────────────────────────────────────────────┘
+❏ Test 2 - Missing student
+↳ Missing student returns ERROR_NO_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 192B, 5ms]
+  ✓  Status code is 200
+  ✓  Result is ERROR_NO_STUDENT
 
-[31m  # [39m[31m failure        [39m[31m detail                                                [39m
-[90m    [39m[90m                [39m[90m                                                       [39m
- 1.  AssertionError  Broken oracle: status should be 200                   
-                     expected response to have status code 200 but got 201 
-                     at assertion:0 in test-script                         
-                     inside "Broken oracle - expecting 200 instead of 201" 
+❏ Test 3 - Inactive student
+↳ Inactive student returns ERROR_INACTIVE_STUDENT
+  PUT http://localhost:3000/students/B999 [200 OK, 178B, 5ms]
+  ✓  Setup succeeded
+
+↳ Inactive student check returns ERROR_INACTIVE_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 198B, 5ms]
+  ✓  Status code is 200
+  ✓  Result is ERROR_INACTIVE_STUDENT
+
+❏ Test 4 - Missing course
+↳ Setup - Active student for missing course
+  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 6ms]
+  ✓  Status code is 200
+  ✓  Response result is OK
+
+↳ Missing course returns ERROR_NO_COURSE
+  POST http://localhost:3000/registrations [200 OK, 191B, 5ms]
+  ✓  Status code is 200
+  ✓  Result is ERROR_NO_COURSE
+
+❏ Test 5 - Missing prerequisites
+↳ Setup - Course CS313 for prerequisite test
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 11ms]
+  ✓  Status code is 200
+  ✓  Response result is OK
+
+↳ Missing prerequisites returns ERROR_PREREQUISITES
+  PUT http://localhost:3000/students/B777 [200 OK, 178B, 8ms]
+  ✓  Setup succeeded
+
+↳ Missing prerequisites check
+  POST http://localhost:3000/registrations [200 OK, 215B, 4ms]
+  ✓  Status code is 200
+  ✓  Result is ERROR_PREREQUISITES
+  ✓  Missing prerequisites list includes CS201
+
+❏ Test 6 - Bad request
+↳ Bad request - missing StudentID or CourseID
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 5ms]
+  ✓  Status code is 400
+  ✓  Result is ERROR_BAD_REQUEST
+
+❏ Test 7 - Bad JSON
+↳ Bad JSON returns ERROR_BAD_JSON
+  POST http://localhost:3000/registrations [400 Bad Request, 199B, 3ms]
+  ✓  Status code is 400
+  ✓  Result is ERROR_BAD_JSON
+
+❏ Test 8 - Boundary no prerequisites
+↳ Boundary - no-prerequisite course succeeds
+  PUT http://localhost:3000/courses/CS101 [200 OK, 178B, 4ms]
+  ✓  Setup succeeded
+
+↳ Boundary - no-prerequisite registration succeeds
+  PUT http://localhost:3000/students/B304 [200 OK, 178B, 4ms]
+  ✓  Setup succeeded
+
+↳ Boundary - no-prerequisite course registration
+  POST http://localhost:3000/registrations [201 Created, 202B, 4ms]
+  ✓  Status code is 201
+  ✓  Success result is OK
+
+❏ Test 10 - Double error: Missing student and course
+↳ Double error - Missing student and missing course
+  POST http://localhost:3000/registrations [200 OK, 192B, 6ms]
+  ✓  Status code is 200
+  ✓  Result is ERROR_NO_STUDENT
+
+❏ Test 11 - Double error: Inactive student and missing prerequisite
+↳ Setup - Inactive student
+  PUT http://localhost:3000/students/DOUBLE_INACTIVE [200 OK, 178B, 3ms]
+  ✓  Status code is 200
+  ✓  Response result is OK
+
+↳ Setup - Course requires CS101
+  PUT http://localhost:3000/courses/DOUBLE_COURSE [200 OK, 178B, 4ms]
+  ✓  Status code is 200
+  ✓  Response result is OK
+
+↳ Double error - Inactive student and missing prerequisite
+  POST http://localhost:3000/registrations [200 OK, 198B, 4ms]
+  ✓  Status code is 200
+  ✓  Result is ERROR_INACTIVE_STUDENT
+
+┌─────────────────────────┬──────────────────┬─────────────────┐
+│                         │         executed │          failed │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│              iterations │                1 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│                requests │               20 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│            test-scripts │               20 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│      prerequest-scripts │                0 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│              assertions │               38 │               1 │
+├─────────────────────────┴──────────────────┴─────────────────┤
+│ total run duration: 773ms                                    │
+├──────────────────────────────────────────────────────────────┤
+│ total data received: 483B (approx)                           │
+├──────────────────────────────────────────────────────────────┤
+│ average response time: 7ms [min: 3ms, max: 57ms, s.d.: 11ms] │
+└──────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                         [39m
+[90m    [39m[90m                [39m[90m                                                                [39m
+ 1.  AssertionError  Status code is 201
+                     expected response to have status code 200 but got 201
+                     at assertion:0 in test-script
+                     inside "Test 1 - Happy path / Happy path - valid registration"

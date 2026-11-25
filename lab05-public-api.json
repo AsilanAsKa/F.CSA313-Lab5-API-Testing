@@ -1,0 +1,35 @@
+{
+  "info": {
+    "name": "Lab05 - Public API Test",
+    "description": "Course registration API exercised with Postman/Newman",
+    "schema": "https://schema.getpostman.com/json/collection/v1.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Test 9 - Public API",
+      "item": [
+        {
+          "name": "Public API - JSONPlaceholder users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "https://jsonplaceholder.typicode.com/users"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is an array\", function () { var json = pm.response.json(); pm.expect(Array.isArray(json)).to.be.true; });",
+                  "pm.test(\"First user name is Leanne Graham\", function () { var json = pm.response.json(); pm.expect(json[0].name).to.eql(\"Leanne Graham\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

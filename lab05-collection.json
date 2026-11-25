@@ -205,6 +205,35 @@
       "name": "Test 4 - Missing course",
       "item": [
         {
+          "name": "Setup - Active student for missing course",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS201\"]}"
+            },
+            "url": "{{baseUrl}}/students/B231234567"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response result is OK\", function () { var json = pm.response.json(); pm.expect(json.result).to.eql(\"OK\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Missing course returns ERROR_NO_COURSE",
           "request": {
             "method": "POST",
@@ -479,32 +508,6 @@
                 "exec": [
                   "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
                   "pm.test(\"Success result is OK\", function () { var json = pm.response.json(); pm.expect(json.result).to.eql(\"OK\"); });"
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Test 9 - Public API",
-      "item": [
-        {
-          "name": "Public API - JSONPlaceholder users",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "https://jsonplaceholder.typicode.com/users"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Response is an array\", function () { var json = pm.response.json(); pm.expect(Array.isArray(json)).to.be.true; });",
-                  "pm.test(\"First user name is Leanne Graham\", function () { var json = pm.response.json(); pm.expect(json[0].name).to.eql(\"Leanne Graham\"); });"
                 ]
               }
             }

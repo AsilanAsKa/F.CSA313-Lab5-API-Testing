@@ -62,7 +62,7 @@ node server.js
 
 ## 6. Test specification
 
-Нийт 11 үндсэн тестийн тохиолдол боловсруулсан.
+Өөрийн API-д зориулан 10 үндсэн тестийн тохиолдол боловсруулсан. Нийтийн API-ийн тестийг тусдаа collection болгон салгасан.
 
 | № | Тест | Нөхцөл | Хүлээгдэж буй status | Хүлээгдэж буй result |
 |---|---|---|---:|---|
@@ -74,9 +74,8 @@ node server.js
 | 06 | Missing Required Fields | studentID эсвэл courseID талбар дутуу | 400 | `ERROR_BAD_REQUEST` |
 | 07 | Invalid JSON | Хүсэлтийн JSON формат алдаатай | 400 | `ERROR_BAD_JSON` |
 | 08 | Boundary Test | Prerequisite шаардахгүй хичээлд бүртгүүлэх | 201 | `OK` |
-| 09 | Public API | JSONPlaceholder хэрэглэгчдийн мэдээлэл авах GET хүсэлт | 200 | Хэрэглэгчдийн массив |
-| 10 | Double Error: Missing Student and Course | Оюутан болон хичээл хоёулаа байхгүй | 200 | `ERROR_NO_STUDENT` |
-| 11 | Double Error: Inactive Student and Missing Prerequisite | Оюутан идэвхгүй бөгөөд prerequisite дутуу | 200 | `ERROR_INACTIVE_STUDENT` |
+| 09 | Double Error: Missing Student and Course | Оюутан болон хичээл хоёулаа байхгүй | 200 | `ERROR_NO_STUDENT` |
+| 10 | Double Error: Inactive Student and Missing Prerequisite | Оюутан идэвхгүй бөгөөд prerequisite дутуу | 200 | `ERROR_INACTIVE_STUDENT` |
 
 Амжилттай бүртгэлийн үед хариу JSON дотор `registrationID` талбар байгаа эсэх болон тоон утгатай эсэхийг шалгасан. Тогтмол ID утга тулгаагүй.
 
@@ -84,28 +83,21 @@ node server.js
 
 ## 7. Postman Collection
 
-Тестүүдийг `lab05-collection.json` файлд хадгалсан.
+Өөрийн API-ийн тестүүдийг `lab05-collection.json` файлд хадгалсан.
 
-Collection нь нийт 11 Folder, 20 хүсэлттэй. Үүнд:
-
-- Амжилттай бүртгэл
-- Оюутан байхгүй үеийн шалгалт
-- Идэвхгүй оюутны шалгалт
-- Хичээл байхгүй үеийн шалгалт
-- Урьдчилсан нөхцөл хангаагүй үеийн шалгалт
-- Шаардлагатай талбар дутуу үеийн шалгалт
-- Буруу JSON формат
-- Урьдчилсан нөхцөлгүй хичээлийн хязгаарын тест
-- JSONPlaceholder нийтийн API тест
-- Давхар алдааны хоёр тест
+Үндсэн collection нь нийт 10 Folder, 20 хүсэлт, 38 assertion-тай. Үүнд амжилттай бүртгэл, оюутан байхгүй, идэвхгүй оюутан, хичээл байхгүй, prerequisite дутуу, шаардлагатай талбар дутуу, буруу JSON, хязгаарын нөхцөл болон хоёр давхар алдааны тестүүд багтсан.
 
 Тест бүрт шаардлагатай оюутан болон хичээлийн мэдээллийг тухайн Folder дотор setup хүсэлтээр тохируулсан. Ингэснээр тестүүд өмнөх тестийн үүсгэсэн өгөгдлөөс хамаарахгүй ажиллах боломжтой болсон.
 
-Мөн зориудаар буруу oracle ашигласан `lab05-collection-fail.json` файлыг тусад нь бэлтгэсэн. Уг collection-д амжилттай бүртгэлийн HTTP 201 хариуг буруу 200 гэж шалгадаг.
+Мөн зориудаар буруу oracle ашигласан `lab05-collection-fail.json` файлыг үндсэн collection-оос хуулбарлан бэлтгэсэн. Энэ collection-д зөвхөн амжилттай бүртгэлийн HTTP 201 хариуг буруу 200 гэж шалгахаар өөрчилсөн. Бусад хүсэлт болон шалгалтууд үндсэн collection-тэй ижил.
+
+JSONPlaceholder нийтийн API-ийн тестийг интернет холболтоос хамааралтай тул үндсэн collection-оос тусад нь `lab05-public-api.json` файлд хадгалсан.
 
 ## 8. Newman ашиглан тест ажиллуулах
 
 ### 8.1 PASS test
+
+API серверийг ажиллуулсны дараа үндсэн collection-ийг ажиллуулсан.
 
 Ажиллуулсан команд:
 
@@ -119,12 +111,14 @@ newman run lab05-collection.json 2>&1 | tee results/newman-pass.txt
 |---|---:|
 | Iterations | 1 |
 | Requests | 20 |
+| Failed requests | 0 |
 | Test scripts | 20 |
-| Assertions | 39 |
+| Failed test scripts | 0 |
+| Assertions | 38 |
 | Failed assertions | 0 |
 | Exit code | 0 |
 
-PASS тестийн бүх assertion амжилттай ажилласан.
+PASS тестийн бүх хүсэлт болон 38 assertion амжилттай ажилласан. Newman амжилттай дууссаныг exit code 0 баталсан.
 
 ### 8.2 FAIL test
 
@@ -140,22 +134,25 @@ newman run lab05-collection-fail.json 2>&1 | tee results/newman-fail.txt
 
 | Үзүүлэлт | Утга |
 |---|---:|
-| Requests | 3 |
-| Assertions | 4 |
+| Requests | 20 |
+| Failed requests | 0 |
+| Test scripts | 20 |
+| Assertions | 38 |
 | Failed assertions | 1 |
 | Exit code | 1 |
 
 Алдааны мэдээлэл:
 
 ```text
-expected response to have status code 200 but got 201
+Status code is 201
+expected response status 200 but got 201
 ```
 
-Энэ нь API зөв хариу өгсөн боловч зориудаар буруу oracle ашигласнаас assertion амжилтгүй болсныг харуулсан.
+Энэ туршилтаар API зөв хариу буюу HTTP 201 буцаасан боловч зориудаар буруу oracle ашигласнаас нэг assertion амжилтгүй болсон. Бусад шалгалтууд амжилттай ажилласан.
 
 ### 8.3 DOWN test
 
-DOWN тест хийхийн өмнө API серверийг `Ctrl+C` ашиглан зогсоосон.
+DOWN тест хийхийн өмнө API серверийг ажиллаж байсан Terminal дээр `Ctrl+C` ашиглан зогсоосон.
 
 Ажиллуулсан команд:
 
@@ -169,7 +166,19 @@ newman run lab05-collection.json 2>&1 | tee results/newman-down.txt
 connect ECONNREFUSED 127.0.0.1:3000
 ```
 
-Локал сервер унтарсан тул Newman локал API-ийн хүсэлтүүдэд холбогдож чадаагүй. DOWN тестээр нийт 20 хүсэлт ажилласнаас локал API-ийн 19 хүсэлт ECONNREFUSED алдаатай болж, JSONPlaceholder-ийн 1 GET хүсэлт амжилттай болсон. Нийт 37 assertion-оос 34 нь амжилтгүй болж, Newman Exit code 1 буцаасан.
+Үр дүн:
+
+| Үзүүлэлт | Утга |
+|---|---:|
+| Requests | 20 |
+| Failed requests | 20 |
+| Test scripts | 20 |
+| Failed test scripts | 1 |
+| Assertions | 36 |
+| Failed assertions | 36 |
+| Exit code | 1 |
+
+Локал сервер унтарсан тул Newman-ийн 20 хүсэлт бүгд холболтын алдаатай болсон. Нийт 36 assertion амжилтгүй болж, нэг test script JSONError үүсгэсэн. Энэ нь сервертэй холбогдож чадаагүйгээс үүдсэн DOWN нөхцөл бөгөөд зориудаар буруу oracle ашигласан FAIL нөхцөлөөс ялгаатай.
 
 ### 8.4 FAIL ба DOWN-ийн ялгаа
 
@@ -183,11 +192,30 @@ FAIL тест нь API хариу өгсөн боловч хүлээгдэж б�
 
 `GET https://jsonplaceholder.typicode.com/users`
 
+Энэ тестийг `lab05-public-api.json` collection-д тусад нь хадгалсан.
+
 Дараах гурван шалгалтыг хийсэн:
 
 1. HTTP status `200` байх.
 2. Хариу өгөгдөл массив хэлбэртэй байх.
 3. Эхний хэрэглэгчийн нэр `Leanne Graham` байх.
+
+Ажиллуулсан команд:
+
+```bash
+newman run lab05-public-api.json 2>&1 | tee results/newman-public-api.txt
+```
+
+Үр дүн:
+
+| Үзүүлэлт | Утга |
+|---|---:|
+| Requests | 1 |
+| Failed requests | 0 |
+| Test scripts | 1 |
+| Assertions | 3 |
+| Failed assertions | 0 |
+| Exit code | 0 |
 
 JSONPlaceholder нь зөвхөн GET хүсэлтээр мэдээлэл авдаг тул нэмэлт setup шаардлагагүй байсан. Харин өөрийн API дээр өгөгдөл үүсгэж, өөр өөр нөхцөлөөр турших шаардлагатай байсан.
 
@@ -199,8 +227,11 @@ JSONPlaceholder нь зөвхөн GET хүсэлтээр мэдээлэл авд
 results/
 ├── newman-pass.txt
 ├── newman-fail.txt
-└── newman-down.txt
+├── newman-down.txt
+└── newman-public-api.txt
 ```
+
+Эдгээр файлд Newman-ийн туршилтын дэлгэрэнгүй гаралт болон үр дүнгийн мэдээлэл хадгалагдсан.
 
 ## 11. Repository бүтэц
 
@@ -211,12 +242,14 @@ lab05/
 ├── server.js
 ├── lab05-collection.json
 ├── lab05-collection-fail.json
+├── lab05-public-api.json
 └── results/
     ├── newman-pass.txt
     ├── newman-fail.txt
-    └── newman-down.txt
+    ├── newman-down.txt
+    └── newman-public-api.txt
 ```
 
 ## 12. Дүгнэлт
 
-Энэхүү лабораторийн ажлаар Postman болон Newman ашиглан REST API системийг тестэлж сурлаа. Бүртгэлийн API-д зориулан зөв болон буруу оролтын нөхцөлүүдийг тодорхойлж, 11 бүлэг тест боловсруулсан. Эквивалент ангилал болон хязгаарын нөхцөлийн аргыг ашигласан. Тест боловсруулахад хамгийн их бодол шаардсан хэсэг нь тест бүрийн өгөгдлийг бие даан тохируулах болон давхар алдааны үед API аль алдааг түрүүлж шалгахыг тодорхойлох явдал байлаа. Оюутан болон хичээл байхгүй нөхцөлийг хамтад нь шалгахад API ERROR_NO_STUDENT үр дүнг буцаасан. Идэвхгүй оюутан болон prerequisite дутуу нөхцөлд ERROR_INACTIVE_STUDENT алдааг түрүүлж шалгасан. PASS туршилтаар 20 хүсэлт, 39 assertion амжилттай болж, FAIL туршилтаар зориудаар буруу oracle ашиглахад алдаа илэрсэн. DOWN туршилтаар локал сервер унтарсан үед 19 хүсэлт ECONNREFUSED алдаатай болж, гаднын JSONPlaceholder хүсэлт амжилттай ажилласан. JSONPlaceholder нь GET хүсэлтээр бэлэн өгөгдөл авдаг бол өөрийн API дээр өгөгдөл үүсгэж, өөр өөр нөхцөлөөр шалгах шаардлагатай байсан. Ингэснээр API-ийн хэвийн ажиллагаа болон алдааны нөхцөлүүдийг Postman, Newman ашиглан системтэйгээр шалгах практик мэдлэг эзэмшлээ.
+Энэхүү лабораторийн ажлаар Postman болон Newman ашиглан REST API системийг тестэлж сурлаа. Өөрийн API-д зориулан 10 үндсэн тестийн тохиолдол боловсруулж, нийт 20 хүсэлт болон 38 assertion ашиглан шалгалт хийсэн. Эквивалент ангилал болон хязгаарын нөхцөлийн аргыг ашигласан. Тест боловсруулахад хамгийн их бодол шаардсан хэсэг нь тест бүрийн өгөгдлийг бие даан тохируулах болон давхар алдааны үед API аль алдааг түрүүлж шалгахыг тодорхойлох явдал байлаа. Оюутан болон хичээл байхгүй нөхцөлийг хамтад нь шалгахад API `ERROR_NO_STUDENT` үр дүнг буцаасан. Идэвхгүй оюутан болон prerequisite дутуу нөхцөлд `ERROR_INACTIVE_STUDENT` алдааг түрүүлж шалгасан. PASS туршилтаар 20 хүсэлт, 38 assertion амжилттай болж, FAIL туршилтаар зориудаар буруу oracle ашиглахад нэг assertion алдаа илэрсэн. DOWN туршилтаар сервер унтарсан үед 20 хүсэлт бүгд `ECONNREFUSED` алдаатай болж, Newman exit code 1 буцаасан. Мөн JSONPlaceholder нийтийн API-г тусдаа collection болгон шалгаж, гурван assertion амжилттай ажиллуулсан. Ингэснээр API-ийн хэвийн ажиллагаа, буруу оролт болон серверийн холболтын алдааг Postman, Newman ашиглан системтэйгээр шалгах практик мэдлэг эзэмшлээ.
